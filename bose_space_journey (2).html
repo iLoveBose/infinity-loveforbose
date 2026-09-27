@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full w-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رحلة في عالم جمال بوسي ❤️</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts (Cairo, Tajawal & Outfit) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js Library & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- GSAP for Smooth Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Canvas Confetti for Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-english {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Floating animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.4)); }
+            50% { filter: drop-shadow(0 0 35px rgba(236, 72, 153, 0.8)); }
+        }
+
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        /* Rocket exhaust pulse */
+        @keyframes flamePulse {
+            0%, 100% { opacity: 0.8; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.2); }
+        }
+
+        .rocket-flame {
+            animation: flamePulse 0.3s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+
+        /* Canvas container */
+        #space-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        /* Dynamic 3D Tag overlay styles */
+        .star-tag {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            pointer-events: auto;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 30;
+        }
+
+        /* Custom Audio Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 999px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #f43f5e;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(244, 63, 94, 0.8);
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f43f5e;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="h-full w-full overflow-hidden bg-slate-900 text-slate-800 antialiased selection:bg-rose-500 selection:text-white">
+
+    <!-- Background Space Ambient Music -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.discordapp.com/attachments/1286807831453896755/1553675415971958814/Existential_Deep_Space_Ambient_-_Coldfire_Ambient_SciFi_1.mp3?ex=6aba1c7d&is=6ab8cafd&hm=ee38054a75e4d24c07a5743e009f40e51d59049e2f110dc3eab857fe7d52f3b8&" type="audio/mpeg">
+    </audio>
+
+    <!-- INTRO LANDING SCREEN -->
+    <div id="intro-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white px-6 py-12 transition-opacity duration-1000">
+        <div class="flex flex-col items-center text-center max-w-xl mx-auto">
+            <!-- Animated Rocket Vector -->
+            <div id="rocket-wrapper" class="relative my-6 cursor-pointer transform transition-transform duration-300 hover:scale-105">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-rose-300 to-indigo-300 blur-2xl opacity-40 animate-pulse"></div>
+
+                <svg id="rocket-svg" class="relative w-44 h-44 md:w-56 md:h-56 drop-shadow-xl animate-float" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="rocket-thruster-flames" class="opacity-0">
+                        <path class="rocket-flame" d="M120 180 C110 210, 130 210, 120 235 C110 210, 130 210, 120 180 Z" fill="url(#flameGrad)" />
+                        <circle cx="120" cy="205" r="12" fill="#ff7800" opacity="0.8" />
+                        <circle cx="120" cy="220" r="8" fill="#ffcc00" opacity="0.9" />
+                    </g>
+                    <path d="M120 30 C150 70 160 120 160 160 L80 160 C80 120 90 70 120 30 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="4"/>
+                    <path d="M120 30 C135 50 145 75 148 90 L92 90 C95 75 105 50 120 30 Z" fill="#fb7185"/>
+                    <path d="M80 130 L50 170 C50 170 75 170 80 160 Z" fill="#f43f5e"/>
+                    <path d="M160 130 L190 170 C190 170 165 170 160 160 Z" fill="#f43f5e"/>
+                    <circle cx="120" cy="115" r="20" fill="#38bdf8" stroke="#ffffff" stroke-width="4"/>
+                    <circle cx="114" cy="110" r="6" fill="#ffffff" opacity="0.7"/>
+                    <rect x="95" y="160" width="50" height="12" rx="4" fill="#64748b"/>
+
+                    <defs>
+                        <linearGradient id="flameGrad" x1="120" y1="180" x2="120" y2="235" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ff4500"/>
+                            <stop offset="0.6" stop-color="#ffaa00"/>
+                            <stop offset="1" stop-color="#ffff00" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <!-- Title Header -->
+            <h1 class="text-3xl md:text-5xl font-black text-slate-800 leading-tight mb-8 drop-shadow-sm">
+                يلا نخش ف رحله ف عالم <br/>
+                <span class="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">جمال بوسي حببتي</span>
+            </h1>
+
+            <!-- Launch Button -->
+            <button id="start-btn" class="group relative inline-flex items-center justify-center px-10 py-4 text-lg font-bold text-white transition-all duration-300 bg-gradient-to-r from-rose-500 to-pink-600 rounded-full shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:scale-105 active:scale-95 cursor-pointer">
+                <span class="relative flex items-center gap-3">
+                    <span>يلا بينا</span>
+                    <i class="fa-solid fa-rocket transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"></i>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 3D SPACE EXPLORATION CONTAINER -->
+    <div id="space-container" class="relative w-full h-full opacity-0 pointer-events-none transition-opacity duration-1000">
+        <!-- Canvas for Three.js -->
+        <canvas id="space-canvas"></canvas>
+
+        <!-- Top persistent UI Bar -->
+        <header class="absolute top-0 left-0 right-0 z-30 flex flex-wrap items-center justify-between p-4 md:p-6 gap-3 pointer-events-none">
+            
+            <!-- Exploration Progress Counter -->
+            <div class="pointer-events-auto flex items-center gap-3 glass-dark px-5 py-2.5 rounded-full shadow-2xl text-white">
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-rose-500/20 text-rose-400">
+                    <i class="fa-solid fa-star text-amber-400 text-sm animate-spin-slow"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 font-medium">النجوم المستكشفة</div>
+                    <div class="text-base font-bold text-rose-300">
+                        <span id="visited-count">0</span> / 6 نجوم
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Star Target Selectors -->
+            <div class="pointer-events-auto hidden xl:flex items-center gap-2 glass-dark p-1.5 rounded-full shadow-2xl">
+                <button onclick="focusStarByIndex(0)" class="px-3 py-1.5 text-xs font-semibold text-amber-200 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-200"></span> Face
+                </button>
+                <button onclick="focusStarByIndex(1)" class="px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span> Soul
+                </button>
+                <button onclick="focusStarByIndex(2)" class="px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hair
+                </button>
+                <button onclick="focusStarByIndex(3)" class="px-3 py-1.5 text-xs font-semibold text-amber-300 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Body
+                </button>
+                <button onclick="focusStarByIndex(4)" class="px-3 py-1.5 text-xs font-semibold text-pink-300 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-pink-400"></span> Rich
+                </button>
+                <button onclick="focusStarByIndex(5)" class="px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:bg-white/10 rounded-full transition flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span> About Us
+                </button>
+            </div>
+
+            <!-- Interactive Music / Ambient Audio Control Widget -->
+            <div class="pointer-events-auto flex items-center gap-3 glass-dark px-4 py-2 rounded-full shadow-2xl text-white">
+                <button id="mute-btn" class="w-8 h-8 rounded-full bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 flex items-center justify-center transition cursor-pointer" title="كتم/تشغيل الصوت">
+                    <i id="mute-icon" class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-music text-slate-400 text-xs"></i>
+                    <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5" class="w-20 md:w-24 cursor-pointer" title="مستوى الصوت">
+                </div>
+            </div>
+
+            <!-- Navigation Helper Tip -->
+            <div class="pointer-events-auto glass-dark px-4 py-2 rounded-full text-slate-300 text-xs font-medium flex items-center gap-2">
+                <i class="fa-solid fa-arrows-spin text-rose-400 animate-spin"></i>
+                <span class="hidden md:inline">اسحبي الشاشة للدوران 360° واضغطي على أي نجمة</span>
+                <span class="md:hidden">دوري بالفضاء واضغطي النجمة</span>
+            </div>
+        </header>
+
+        <!-- Dynamic Hover / Proximity Tooltip Cards Container -->
+        <div id="star-tags-container" class="absolute inset-0 pointer-events-none z-20"></div>
+
+        <!-- Touch/Click Flash Overlay for transitions -->
+        <div id="flash-overlay" class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-500 z-40"></div>
+    </div>
+
+    <!-- STAR DETAIL MODAL SCREEN -->
+    <div id="star-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-500">
+        <div id="star-modal-card" class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card rounded-3xl p-6 md:p-8 shadow-2xl transform scale-95 transition-transform duration-500 flex flex-col items-center text-center">
+            
+            <!-- Close Button -->
+            <button onclick="closeStarModal()" class="absolute top-4 left-4 w-10 h-10 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-600 flex items-center justify-center transition shadow-sm cursor-pointer z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Star Category Badge -->
+            <div id="modal-badge" class="font-english inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-4 shadow-sm">
+                THE BEAUTY OF YOUR FACE
+            </div>
+
+            <!-- Image Container with Fallback -->
+            <div class="relative w-full max-w-md h-64 md:h-80 mb-6 rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-slate-100 group">
+                <img id="modal-image" src="" alt="Boussy Photo" class="w-full h-full object-cover transform transition duration-700 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x600/ffd1dc/333333?text=Boussy+❤️';" />
+                <div class="absolute inset-0 ring-1 ring-black/10 rounded-2xl pointer-events-none"></div>
+            </div>
+
+            <!-- Descriptive Arabic Text -->
+            <p id="modal-text" class="text-slate-700 text-base md:text-lg leading-relaxed font-bold max-w-xl mb-8 px-2">
+                <!-- Text filled dynamically -->
+            </p>
+
+            <!-- Return Button -->
+            <button onclick="closeStarModal()" class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-base rounded-full shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 transform hover:scale-105 active:scale-95 transition cursor-pointer">
+                <i class="fa-solid fa-arrow-right"></i>
+                <span>العودة للفضاء</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- COMPLETION CELEBRATION MODAL -->
+    <div id="completion-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-slate-950/80 backdrop-blur-lg opacity-0 pointer-events-none transition-all duration-700">
+        <div id="completion-card" class="relative w-full max-w-xl glass-card rounded-3xl p-8 md:p-10 shadow-2xl transform scale-90 transition-all duration-700 flex flex-col items-center text-center border-2 border-rose-300">
+            
+            <!-- Crown / Celebration Icon -->
+            <div class="relative mb-6">
+                <div class="absolute -inset-4 bg-rose-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                <div class="relative w-20 h-20 rounded-full bg-gradient-to-tr from-rose-500 to-amber-400 flex items-center justify-center text-white text-3xl shadow-lg">
+                    <i class="fa-solid fa-crown text-amber-200 animate-bounce"></i>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-2xl md:text-4xl font-black text-slate-800 mb-3">
+                أحلى ملكة في الدنيا 👑
+            </h2>
+
+            <div class="w-16 h-1 bg-gradient-to-r from-rose-500 to-amber-400 rounded-full mb-6"></div>
+
+            <!-- Celebration Text -->
+            <p class="text-slate-800 text-base md:text-lg leading-relaxed font-extrabold mb-6 bg-rose-50/80 p-6 rounded-2xl border border-rose-100 shadow-inner">
+                "علي قد كل النجوم الي ف الفضاء ده كله علي قد منا بحبك اكتر من عددهم و شايف فيكي حاجات حلوه اكتر من النجوم دي كلها الي ف الكون فا محدش يقدر يعلي عليكي ف نظري يبوسي ولا انشلا كانت مين بجد بحبك اوي اوعي تعيطي تاني ينونو ولا دمعه تنزل منك لان اليوم بيبقا زعل و انا بحزن علي دموعك دي و بحس اني وحش اوي لما دموعك تنول انا بحبك و نفسي اعيشك ف جنه و اعملك كل الي نفسك فيه مش علشان بس بحبك بس علشان انت تستاهلي يقطتي تستاهلي اوي بجد" ❤️✨
+            </p>
+
+            <!-- Voice Note Audio Button -->
+            <div class="mb-8 w-full flex justify-center">
+                <button id="play-voice-btn" onclick="toggleVoiceNote()" class="inline-flex items-center gap-2.5 px-6 py-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 font-bold text-sm rounded-full shadow-sm hover:shadow-md transition transform active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-heart text-sky-400 text-sm"></i>
+                    <i id="voice-speaker-icon" class="fa-solid fa-volume-high text-sky-500 text-xs"></i>
+                    <span id="voice-btn-text">تشغيل الصوت 💙</span>
+                    <!-- Animated sound wave bars when playing -->
+                    <span id="voice-wave" class="hidden flex items-center gap-1 ml-1">
+                        <span class="w-1 h-3 bg-sky-400 rounded-full animate-pulse"></span>
+                        <span class="w-1 h-4 bg-sky-500 rounded-full animate-pulse delay-75"></span>
+                        <span class="w-1 h-2 bg-sky-400 rounded-full animate-pulse delay-150"></span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Replay / Revisit Button -->
+            <button onclick="closeCompletionModal()" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 text-white font-extrabold text-lg rounded-full shadow-xl shadow-rose-500/30 hover:scale-105 active:scale-95 transition cursor-pointer">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>استكشفي الفضاء تاني</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* STAR DATA SPECIFICATION */
+        const STARS_DATA = [
+            {
+                id: 'face',
+                title: 'The beauty of your face',
+                color: '#ffddaa',
+                colorHex: 0xffddaa,
+                badgeClass: 'bg-amber-100 text-amber-800 border border-amber-300',
+                image: 'https://i.postimg.cc/tCw5nv06/1790481941710.jpg',
+                text: 'خلينا نقول ان جمالك اكبر جزء منه ف ملامحك الجميله و الملائكيه القمر دي انت البنت الوحيده الي تستاهل يتقال عليها قمر بجد ب جمالها و زينه ملامحها و تفاصيل و نحته وشك الي تدرس ف كتب التجميل و رسمه عيونك و خدود يا نونو و لمعان عيونك يا اميرتي عيونك الي تسحر و الي تخطفني',
+                position: { x: 0, y: 8, z: -28 }
+            },
+            {
+                id: 'soul',
+                title: 'YOUR SOUL',
+                color: '#ff3366',
+                colorHex: 0xff3366,
+                badgeClass: 'bg-rose-100 text-rose-800 border border-rose-300',
+                image: 'https://i.postimg.cc/NfDxpGrL/1790481941840.jpg',
+                text: 'روحك الحلوه هي الي محليه حياتنا و هي السبب ف كل حاجه حلوه بينا روحك الي بتسامح و الي بتحب روحك السكر الي بتطلع كلامك و افكارك و كل السكر الي بيجيي منك روحك الي انا حبيتها و شدتني من اول مره اتكلمت معاها و اتعلقت بيها انا بحبها اوي و بحبك اوي و ربنا يخليكي ليا يارب',
+                position: { x: -26, y: -4, z: -10 }
+            },
+            {
+                id: 'hair',
+                title: 'YOUR HAIR',
+                color: '#00ff88',
+                colorHex: 0x00ff88,
+                badgeClass: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
+                image: 'https://i.postimg.cc/bJPTmZL2/1790481941547.jpg',
+                text: 'شعرك العسول الطويل الحرير الي حرفيا مفيش اطول منه الي اطول من الي ف الاعلانات بتاعت الشعر شعرك ينونو مفيش احلي من شكله ولا ريحته ولا طوله ولا ملمسه ولا تفاصيله ولا خصلاته ولا اطرافه ولا ضفايره بجد شعك هو تاجك يا اميره يا كوين',
+                position: { x: 26, y: 5, z: -12 }
+            },
+            {
+                id: 'body',
+                title: 'YOUR BODY',
+                color: '#ffd700',
+                colorHex: 0xffd700,
+                badgeClass: 'bg-amber-100 text-amber-800 border border-amber-300',
+                image: 'https://i.postimg.cc/wj0ssFbW/1790487464765.jpg',
+                text: 'اول ما شوفتك وانا حاسس اني حبيتك اكتر و متعلق بيكي اكتر علشان انت جميله اوي و هوت يبوسي جمالك جمال حلو و حقيقي منغير هدوم ولا استايل نوتي و لبسك تحفه و بيرفكت و مع ذالك انت زي القمر اوي بجد يبوسي ربنا يخليكي ليا و يحفظ جمالك يا مزتي ',
+                position: { x: 0, y: -16, z: 22 }
+            },
+            {
+                id: 'rich',
+                title: 'IAM RICH',
+                color: '#ff69b4',
+                colorHex: 0xff69b4,
+                badgeClass: 'bg-pink-100 text-pink-800 border border-pink-300',
+                image: 'https://i.postimg.cc/GtNFWKv3/IMG-20250227-165125-833.jpg',
+                text: 'انا وانا بفكر بلاقي اني غني اوي غني اوي من ساعه ما عرفت يا اغلي شريكه حياه ف الدنيا غني بيكي و ب وجودك غني ب وجود بنوته غاليه و بنت ناس و اصول و جميله زيك من كتر غلاوتك يتكتب فيكي اشعار يبوسي بجد',
+                position: { x: -18, y: 18, z: 12 }
+            },
+            {
+                id: 'aboutus',
+                title: 'ABOUT US',
+                color: '#00ffff',
+                colorHex: 0x00ffff,
+                badgeClass: 'bg-cyan-100 text-cyan-800 border border-cyan-300',
+                image: 'https://i.postimg.cc/j2WN4fmv/IMG-20250215-060147-278.jpg',
+                text: 'انا وانت بجد علاقتنا فعلا تحفه بكل الي فيها بنحب بعض بجد انت افضل انسان ف الكون بجد انا لو فكرت خمس دقايق بس هقول ويت ديم انت بجد عظيمه اوي ف كل حاجه بتعمليها و مميزه عن اي حاجه فا ده لوحده مميزنا مووووت و هيفضل مميزنا لاني بحبك و معاكي و الدنيا كلها هتغير مننا يبوسي',
+                position: { x: 20, y: -12, z: -18 }
+            }
+        ];
+
+        // Global State Trackers
+        const visitedStars = new Set();
+        let scene, camera, renderer, controls;
+        let starMeshes = [];
+        let raycaster, mouse;
+        let activeFocusedStar = null;
+        let starTagElements = [];
+        let isTransitioning = false;
+
+        // Dedicated Audio Instance for Special Completion Voice Note
+        const voiceAudio = new Audio('https://cdn.discordapp.com/attachments/1286807831453896755/1553678035688099930/bose.aac?ex=6aba1eed&is=6ab8cd6d&hm=b44d9d073ad613b95a43480021096e5cdc37c4020c72d8d31af99dbf9f482d20&');
+        let isVoicePlaying = false;
+
+        function toggleVoiceNote() {
+            const bgMusic = document.getElementById('bg-music');
+            const speakerIcon = document.getElementById('voice-speaker-icon');
+            const wave = document.getElementById('voice-wave');
+            const btnText = document.getElementById('voice-btn-text');
+
+            if (!isVoicePlaying) {
+                // Smoothly duck ambient background music so voice note is crystal clear
+                if (bgMusic) bgMusic.volume = 0.1;
+
+                voiceAudio.play().then(() => {
+                    isVoicePlaying = true;
+                    speakerIcon.className = 'fa-solid fa-pause text-sky-600 text-xs';
+                    wave.classList.remove('hidden');
+                    btnText.innerText = 'إيقاف الصوت 💙';
+                }).catch(err => {
+                    console.log('Voice note play error:', err);
+                });
+            } else {
+                pauseVoiceNote();
+            }
+        }
+
+        function pauseVoiceNote() {
+            const bgMusic = document.getElementById('bg-music');
+            const speakerIcon = document.getElementById('voice-speaker-icon');
+            const wave = document.getElementById('voice-wave');
+            const btnText = document.getElementById('voice-btn-text');
+            const volumeSlider = document.getElementById('volume-slider');
+
+            voiceAudio.pause();
+            isVoicePlaying = false;
+            speakerIcon.className = 'fa-solid fa-volume-high text-sky-500 text-xs';
+            wave.classList.add('hidden');
+            btnText.innerText = 'تشغيل الصوت 💙';
+
+            // Restore background music volume level
+            if (bgMusic && volumeSlider) {
+                bgMusic.volume = parseFloat(volumeSlider.value);
+            }
+        }
+
+        voiceAudio.addEventListener('ended', pauseVoiceNote);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initLaunchInteraction();
+            initAudioControls();
+            initThreeSpace();
+            animateThree();
+        });
+
+        function initAudioControls() {
+            const bgMusic = document.getElementById('bg-music');
+            const volumeSlider = document.getElementById('volume-slider');
+            const muteBtn = document.getElementById('mute-btn');
+            const muteIcon = document.getElementById('mute-icon');
+
+            bgMusic.volume = 0.5;
+
+            // Volume slider change
+            volumeSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                bgMusic.volume = val;
+                if (val === 0) {
+                    bgMusic.muted = true;
+                    updateMuteIcon(true);
+                } else {
+                    bgMusic.muted = false;
+                    updateMuteIcon(false);
+                }
+            });
+
+            // Mute / Unmute button click
+            muteBtn.addEventListener('click', () => {
+                bgMusic.muted = !bgMusic.muted;
+                updateMuteIcon(bgMusic.muted);
+                if (!bgMusic.muted && bgMusic.volume === 0) {
+                    bgMusic.volume = 0.5;
+                    volumeSlider.value = 0.5;
+                }
+            });
+
+            function updateMuteIcon(isMuted) {
+                if (isMuted) {
+                    muteIcon.className = 'fa-solid fa-volume-xmark text-rose-400';
+                } else {
+                    muteIcon.className = 'fa-solid fa-volume-high text-rose-300';
+                }
+            }
+        }
+
+        function initLaunchInteraction() {
+            const startBtn = document.getElementById('start-btn');
+            const rocketSvg = document.getElementById('rocket-svg');
+            const rocketFlames = document.getElementById('rocket-thruster-flames');
+            const introScreen = document.getElementById('intro-screen');
+            const spaceContainer = document.getElementById('space-container');
+            const bgMusic = document.getElementById('bg-music');
+
+            startBtn.addEventListener('click', () => {
+                // Play ambient music on user interaction
+                bgMusic.play().catch(err => {
+                    console.log('Audio autoplay blocked or delayed:', err);
+                });
+
+                // Show rocket thruster flames
+                gsap.to(rocketFlames, { opacity: 1, duration: 0.3 });
+
+                // Shake rocket slightly before takeoff
+                gsap.to(rocketSvg, {
+                    x: "random(-4, 4)",
+                    repeat: 5,
+                    yoyo: true,
+                    duration: 0.08,
+                    onComplete: () => {
+                        // Rocket Shoots upward off-screen
+                        gsap.to(rocketSvg, {
+                            y: -window.innerHeight - 300,
+                            scale: 1.3,
+                            duration: 1.2,
+                            ease: "power3.in",
+                            onComplete: () => {
+                                // Transition screen fade
+                                gsap.to(introScreen, {
+                                    opacity: 0,
+                                    duration: 0.8,
+                                    onComplete: () => {
+                                        introScreen.style.display = 'none';
+                                        spaceContainer.classList.remove('opacity-0', 'pointer-events-none');
+                                        spaceContainer.classList.add('opacity-100');
+                                        
+                                        // Animate initial camera entrance
+                                        gsap.from(camera.position, {
+                                            z: 2,
+                                            y: 0,
+                                            duration: 2.5,
+                                            ease: "power2.out"
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function initThreeSpace() {
+            const canvas = document.getElementById('space-canvas');
+
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a1a, 0.008);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 35);
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Controls setup
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.6;
+            controls.zoomSpeed = 0.8;
+            controls.minDistance = 5;
+            controls.maxDistance = 70;
+            controls.enablePan = false;
+
+            // Ambient Light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            // Create Thousands of Twinkling Background Stars
+            createBackgroundStarfield();
+
+            // Create Key Glowing Stars
+            createKeyStars();
+
+            // Mouse & Raycaster Setup
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('click', onCanvasClick);
+            window.addEventListener('touchstart', onTouchStart, { passive: false });
+        }
+
+        function createBackgroundStarfield() {
+            const starCount = 3500;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(starCount * 3);
+            const colors = new Float32Array(starCount * 3);
+            const sizes = new Float32Array(starCount);
+
+            const palette = [
+                new THREE.Color(0xffffff),
+                new THREE.Color(0x93c5fd),
+                new THREE.Color(0xfca5a5),
+                new THREE.Color(0xfef08a),
+                new THREE.Color(0xc084fc)
+            ];
+
+            for (let i = 0; i < starCount; i++) {
+                const u = Math.random();
+                const v = Math.random();
+                const theta = u * 2.0 * Math.PI;
+                const phi = Math.acos(2.0 * v - 1.0);
+                const r = 80 + Math.random() * 120;
+
+                const x = r * Math.sin(phi) * Math.cos(theta);
+                const y = r * Math.sin(phi) * Math.sin(theta);
+                const z = r * Math.cos(phi);
+
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = y;
+                positions[i * 3 + 2] = z;
+
+                const color = palette[Math.floor(Math.random() * palette.length)];
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                sizes[i] = Math.random() * 2.2 + 0.8;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            // Star Texture Canvas Generator
+            const canvas = document.createElement('canvas');
+            canvas.width = 16;
+            canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.4, 'rgba(255,255,255,0.8)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 16, 16);
+
+            const starTexture = new THREE.CanvasTexture(canvas);
+
+            const material = new THREE.PointsMaterial({
+                size: 1.8,
+                vertexColors: true,
+                map: starTexture,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            const starSystem = new THREE.Points(geometry, material);
+            scene.add(starSystem);
+        }
+
+        function createKeyStars() {
+            const tagsContainer = document.getElementById('star-tags-container');
+
+            STARS_DATA.forEach((data, index) => {
+                const group = new THREE.Group();
+                group.position.set(data.position.x, data.position.y, data.position.z);
+
+                // Core Sphere
+                const coreGeo = new THREE.SphereGeometry(1.4, 32, 32);
+                const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+                group.add(coreMesh);
+
+                // Outer Glowing Halo Mesh
+                const haloGeo = new THREE.SphereGeometry(2.4, 32, 32);
+                const haloMat = new THREE.MeshBasicMaterial({
+                    color: data.colorHex,
+                    transparent: true,
+                    opacity: 0.5,
+                    blending: THREE.AdditiveBlending
+                });
+                const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+                group.add(haloMesh);
+
+                // Outer Pulsing Ring
+                const ringGeo = new THREE.RingGeometry(2.8, 3.2, 32);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: data.colorHex,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.6,
+                    blending: THREE.AdditiveBlending
+                });
+                const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+                ringMesh.rotation.x = Math.PI / 3;
+                group.add(ringMesh);
+
+                // Point Light source
+                const pLight = new THREE.PointLight(data.colorHex, 2, 20);
+                group.add(pLight);
+
+                // Attach references
+                group.userData = {
+                    data: data,
+                    index: index,
+                    haloMesh: haloMesh,
+                    ringMesh: ringMesh
+                };
+
+                scene.add(group);
+                starMeshes.push(group);
+
+                // Create associated HTML Floating Tag UI
+                const tagEl = document.createElement('div');
+                tagEl.className = 'star-tag glass-dark px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 cursor-pointer transform hover:scale-110 transition duration-300';
+                tagEl.innerHTML = `
+                    <span class="w-3 h-3 rounded-full animate-ping" style="background-color: ${data.color}"></span>
+                    <span class="text-white font-english font-bold text-xs md:text-sm tracking-wider uppercase">${data.title}</span>
+                    <i class="fa-solid fa-chevron-left text-rose-400 text-xs mr-1"></i>
+                `;
+                tagEl.addEventListener('click', () => triggerStarClick(group));
+                tagsContainer.appendChild(tagEl);
+
+                starTagElements.push({
+                    element: tagEl,
+                    group: group
+                });
+            });
+        }
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+            }
+        }
+
+        function onCanvasClick() {
+            if (isTransitioning) return;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+
+            for (let intersect of intersects) {
+                let obj = intersect.object;
+                while (obj.parent && !obj.userData.data) {
+                    obj = obj.parent;
+                }
+                if (obj && obj.userData && obj.userData.data) {
+                    triggerStarClick(obj);
+                    break;
+                }
+            }
+        }
+
+        function focusStarByIndex(index) {
+            if (starMeshes[index]) {
+                triggerStarClick(starMeshes[index]);
+            }
+        }
+
+        function triggerStarClick(starGroup) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const data = starGroup.userData.data;
+            activeFocusedStar = starGroup;
+
+            const targetPos = new THREE.Vector3().copy(starGroup.position);
+            const cameraTarget = new THREE.Vector3()
+                .copy(targetPos)
+                .add(new THREE.Vector3(0, 1, 8));
+
+            controls.enabled = false;
+
+            gsap.to(camera.position, {
+                x: cameraTarget.x,
+                y: cameraTarget.y,
+                z: cameraTarget.z,
+                duration: 1.5,
+                ease: "power2.inOut",
+                onUpdate: () => {
+                    controls.target.copy(targetPos);
+                    controls.update();
+                }
+            });
+
+            const flashOverlay = document.getElementById('flash-overlay');
+            gsap.to(flashOverlay, {
+                opacity: 1,
+                duration: 0.8,
+                delay: 0.9,
+                onComplete: () => {
+                    openStarModal(data);
+                    visitedStars.add(data.id);
+                    updateVisitedCounter();
+
+                    gsap.to(flashOverlay, {
+                        opacity: 0,
+                        duration: 0.5,
+                        delay: 0.2
+                    });
+                }
+            });
+        }
+
+        function openStarModal(data) {
+            const modal = document.getElementById('star-modal');
+            const card = document.getElementById('star-modal-card');
+            const badge = document.getElementById('modal-badge');
+            const img = document.getElementById('modal-image');
+            const text = document.getElementById('modal-text');
+
+            badge.className = `font-english inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-4 shadow-sm ${data.badgeClass}`;
+            badge.innerText = data.title;
+            img.src = data.image;
+            text.innerText = data.text;
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeStarModal() {
+            const modal = document.getElementById('star-modal');
+            const card = document.getElementById('star-modal-card');
+
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+
+            if (activeFocusedStar) {
+                gsap.to(camera.position, {
+                    x: 0,
+                    y: 0,
+                    z: 35,
+                    duration: 1.5,
+                    ease: "power2.out",
+                    onUpdate: () => {
+                        controls.target.set(0, 0, 0);
+                        controls.update();
+                    },
+                    onComplete: () => {
+                        controls.enabled = true;
+                        isTransitioning = false;
+                        activeFocusedStar = null;
+
+                        if (visitedStars.size === STARS_DATA.length) {
+                            setTimeout(triggerGrandCelebration, 600);
+                        }
+                    }
+                });
+            } else {
+                controls.enabled = true;
+                isTransitioning = false;
+            }
+        }
+
+        function updateVisitedCounter() {
+            const countEl = document.getElementById('visited-count');
+            countEl.innerText = visitedStars.size;
+            gsap.fromTo(countEl, { scale: 1.5 }, { scale: 1, duration: 0.4 });
+        }
+
+        function triggerGrandCelebration() {
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+
+            const end = Date.now() + (3 * 1000);
+            const colors = ['#f43f5e', '#ec4899', '#ffd700', '#38bdf8'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            const compModal = document.getElementById('completion-modal');
+            const compCard = document.getElementById('completion-card');
+
+            compModal.classList.remove('opacity-0', 'pointer-events-none');
+            compModal.classList.add('opacity-100');
+            compCard.classList.remove('scale-90');
+            compCard.classList.add('scale-100');
+        }
+
+        function closeCompletionModal() {
+            pauseVoiceNote();
+
+            const compModal = document.getElementById('completion-modal');
+            const compCard = document.getElementById('completion-card');
+
+            compCard.classList.remove('scale-100');
+            compCard.classList.add('scale-90');
+            compModal.classList.remove('opacity-100');
+            compModal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+
+            const time = Date.now() * 0.0015;
+
+            // Pulsing animation for star halos & rings
+            starMeshes.forEach((group) => {
+                const halo = group.userData.haloMesh;
+                const ring = group.userData.ringMesh;
+
+                halo.scale.setScalar(1 + Math.sin(time * 3 + group.userData.index) * 0.15);
+                ring.rotation.z += 0.01;
+            });
+
+            controls.update();
+
+            // Project 3D vector positions into 2D UI screen coordinates
+            starTagElements.forEach(item => {
+                const vector = new THREE.Vector3();
+                item.group.getWorldPosition(vector);
+
+                const dist = camera.position.distanceTo(vector);
+                vector.project(camera);
+
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+
+                if (vector.z > 1 || dist > 65) {
+                    item.element.style.opacity = '0';
+                    item.element.style.pointerEvents = 'none';
+                } else {
+                    item.element.style.left = `${x}px`;
+                    item.element.style.top = `${y - 25}px`;
+                    item.element.style.opacity = '1';
+                    item.element.style.pointerEvents = 'auto';
+                }
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
